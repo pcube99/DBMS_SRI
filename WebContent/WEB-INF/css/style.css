@@ -1,0 +1,24 @@
+#welcome{
+	color: black;
+	font-size: 30px;
+	font-weight: bold;
+	padding-left: 30%;
+	padding-right: 30%;
+}
+body{
+background-color: black;
+}
+.hidethis{
+	display: none;
+}
+#container{
+	color: white;
+	font-weight: bold;
+	height: 250px;
+	width: 300px;
+	background-color: #4d79ff;
+	left: 40%;
+	right: 40%;
+	top: 20%;
+	position: absolute;
+}
