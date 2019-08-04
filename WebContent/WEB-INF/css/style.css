@@ -1,9 +1,90 @@
+a:hover,a:focus{
+    outline: none;
+    text-decoration: none;
+}
+.tab .nav-tabs{
+    border-bottom: 0 none;
+}
+.tab .nav-tabs li{
+    margin-right: 2px;
+}
+.tab .nav-tabs li a{
+    font-size: 14px;
+    color: #333;
+    padding: 18px 25px;
+    border: none;
+    border-radius: 0;
+    background: #efefef;
+    text-transform: uppercase;
+    position: relative;
+}
+.tab .nav-tabs li.active a:after{
+    content: "";
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid #4aaaa5;
+}
+.tab .nav-tabs li.active a,
+.tab .nav-tabs li.active a:focus,
+.tab .nav-tabs li.active a:hover{
+    border: none;
+    background: #4aaaa5;
+    color: #fff;
+    transition: all 0.20s linear 0s;
+}
+.tab .tab-content{
+    font-size: 15px;
+    color: #808080;
+    border: 0 none;
+    line-height: 25px;
+    padding: 5px 0;
+    margin-top: 15px;
+}
+.tab .tab-content h3{
+    margin-top: 10px;
+    font-size: 24px;
+}
+@media only screen and (max-width: 479px){
+    .tab .nav-tabs li{
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .tab .nav-tabs li a{
+        padding: 20px;
+    }
+    .tab .nav-tabs li.active a:after{
+        border: none;
+    }
+    .tab .tab-content{
+        margin-top: 5px;
+    }
+}
+
 #welcome{
 	color: black;
 	font-size: 30px;
 	font-weight: bold;
-	padding-left: 30%;
-	padding-right: 30%;
+	margin-left: 35%;
+	margin-right: 35%;
+	
+}
+#errorbtn{
+	position: fixed;
+	margin-left: 40%;
+	margin-right: 40%;
+	margin-top: 30%;
+}
+#error{
+	height: 80%;
+	width: 60%;
+	position: fixed;
+	padding: 0;
+	margin-left: 20%;
+		margin-right: 20%;
+	
+	background-image: url("e.JPG");
 }
 body{
 background-color: black;

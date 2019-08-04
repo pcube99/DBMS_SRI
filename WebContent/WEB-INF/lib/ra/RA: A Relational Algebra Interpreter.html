@@ -1,0 +1,308 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+<style type="text/css">
+<!--
+body {
+    color: black;
+    background: white;
+    /* font-family: Verdana, Arial, Helvetica, sans-serif; */
+    font-family: Garamond, serif;
+}
+.small {
+    font-size: 75%;
+}
+.active {
+    color: black;
+    background: #6699cc;
+}
+.inactive {
+    color: black;
+    background: #b6cbeb;
+}
+.attention {
+    color: yellow;
+    background: red;
+    font-size: 75%;
+    vertical-align: top;
+}
+-->
+</style>
+<title>RA: A Relational Algebra Interpreter</title>
+</head>
+<body>
+
+<center>
+<h1>RA: A Relational Algebra Interpreter</h1>
+</center>
+
+<hr>
+<h3>Introduction</h3>
+
+<p>RA is a simple relational algebra interpreter written in Java.  It
+is built on top of an SQL-based relational database system.  It
+implements relational algebra queries by translating them into SQL
+queries and executing them on the underlying database system through
+JDBC.  RA is packaged with SQLiteJDBC, so you can use RA as a
+standalone relational-algebra database system.  Alternatively, you
+can use RA as a relational-algebra frontend to other database
+systems.</p>
+
+<hr>
+<h3>Currently Supported Database Systems</h3>
+
+<ul>
+
+<li>SQLite (SQLite JDBC v056): JDBC driver is included in the JAR.</li>
+
+<li>PostgreSQL 8.4: JDBC driver is included in the JAR.</li>
+
+<li>MySQL 5: JDBC driver is included in the JAR.</li>
+
+<li>IBM DB2 9.7: JDBC driver is included in the JAR.</li>
+
+</ul>
+
+<hr>
+<h3>Getting RA</h3>
+
+<p>The current version of RA is 2.2b (released Aug. 15, 2014).  You can
+download one of the following:
+
+</p><ul>
+
+<li>A <a href="https://users.cs.duke.edu/~junyang/ra2/ra-2.2b.tgz">.tar.gz</a> file with everything
+including source code.</li>
+
+<li>A <a href="https://users.cs.duke.edu/~junyang/ra2/ra-2.2b.zip">.zip</a> file with everything including
+source code.</li>
+
+<li>Just the <a href="https://users.cs.duke.edu/~junyang/ra2/ra.jar">.jar</a> file.  But we also recommend
+you download <a href="https://users.cs.duke.edu/~junyang/ra2/sample.db">sample.db</a> (sample SQLite
+database), <a href="https://users.cs.duke.edu/~junyang/ra2/sample.properties">sample.properties</a> (RA
+connection properties file), and <a href="https://users.cs.duke.edu/~junyang/ra2/sample.ra">sample.ra</a>
+(RA script for creating/restoring the sample database), and put them
+in the same directory as the .jar file.</li>
+
+</ul>
+
+Or follow the <a href="https://github.com/junyang/RA">project</a> on
+GitHub!<p></p>
+
+<hr>
+<h3>Using RA</h3>
+
+<p>To run RA, just type "<tt>java -jar ra.jar</tt>" in the
+directory containing <tt>ra.jar</tt>.  RA will then by default run on
+the SQLite database file <tt>sample.db</tt> (on which query examples
+below are based).  To see more options of running RA, type
+"<tt>java -jar ra.jar -h</tt>".  Options <tt>-i</tt> (read
+commands/queries from a file), <tt>-o</tt> (log output to a file),
+and <tt>-v</tt> (turn on verbose mode) are all pretty useful.</p>
+
+<p>If you want to connect to another database or a different database
+system, you will find it convenient to write a connection properties
+file of your own.  An example is the file <tt>sample.properties</tt>.
+Once you have rolled your own properties file, say <tt><i>PROP_FILE</i></tt>,
+run RA using "<tt>java -jar ra.jar <i>PROP_FILE</i></tt>";
+add <tt>-P</tt> if you prefer typing your password at runtime instead of
+storing it in the properties file.</p>
+
+<p>Once you are in RA, you will see the <tt>ra&gt;</tt> prompt.  For
+help, type <tt>\help;</tt>.  You exit RA by issuing the
+<tt>\quit;</tt> command.  Use the <tt>\list;</tt> command to see what
+relations are available for query in your database.</p>
+
+<ul>
+
+<li><i>ADVANCED USERS:</i> Using
+<tt>\sqlexec_{<i>statement</i>};</tt>, you can send an SQL command to
+the underlying database.  This command allows you to manipulate the
+database in ways (e.g., updating it) that you cannot with just
+relational algebra.  For example, the SQLite database file
+<tt>sample.db</tt> was in fact created by running "<tt>java -jar
+ra.jar sample.properties -i sample.ra</tt>", where
+<tt>sample.ra</tt> makes heavy use of <tt>\sqlexec</tt>.</li>
+
+</ul>
+
+<p>RA supports command-line input history and editing using arrow
+keys: Up/Down recall previous/next lines, and Left/Right move within
+the current line.</p>
+
+<p>The simplest relational query you can write is one that returns
+the content of a relation: Just type <tt><i>relName</i>;</tt>, where
+<tt><i>relName</i></tt> is the name of the relation.  Note that every
+command/operator should start with a backslash (<tt>\</tt>), and
+every query/command should be terminated by a semicolon
+(<tt>;</tt>).</p>
+
+<p>For most database systems that RA runs on (except MySQL),
+relation and attribute names are case-insensitive per SQL standard.
+For example, <tt>drink</tt> is just as good as <tt>DRINK</tt>.
+Attributes can be of a variety of types.  Details are not
+important; just beware that types such as <tt>INTEGER</tt>,
+<tt>SMALLINT</tt>, <tt>FLOAT</tt>, <tt>REAL</tt>, <tt>DOUBLE</tt>,
+<tt>DECIMAL</tt>, <tt>NUMERIC</tt> are for numbers, and <tt>CHAR</tt>
+and <tt>VARCHAR</tt> are for strings.</p>
+
+<p>Here is an example of a complex query, which returns beers liked
+by those drinkers who do not frequent James Joyce Pub:
+</p><pre>\project_{beer} (
+
+  ((\project_{name}          // all drinkers
+     Drinker)
+   \diff
+   (\rename_{name}           // rename so we can diff
+      \project_{drinker}     // drinkers who frequent JJP
+        \select_{bar = 'James Joyce Pub'}
+          Frequents))
+
+  \join_{drinker = name}     /* join with Likes to find beers */
+
+  Likes
+
+);
+</pre>
+The syntax is insensitive to white space, and it is fine to enter a
+query on multiple lines; RA will number the lines (beyond the first
+one) you enter for the current query.  C/C++/Java-style comments
+(<tt>//</tt> and <tt>/*...*/</tt>) are supported.<p></p>
+
+<p>RA supports the following relational algebra operators:
+
+</p><ul>
+
+<li><tt>\select_{<i>cond</i>}</tt> is the relational selection
+operator.  For example, to select <tt>Drinker</tt> tuples with name
+Amy or Ben, we can write <tt>\select_{name = 'Amy' or name = 'Ben'}
+Drinker;</tt>.  Syntax for <i>cond</i> follows SQL.  Note that string
+literals should be enclosed in <b><i>single</i></b> quotes, and you
+may use boolean operators <tt>and</tt>, <tt>or</tt>, and
+<tt>not</tt>.  Comparison operators <tt>&lt;=</tt>, <tt>&lt;</tt>,
+<tt>=</tt>, <tt>&gt;</tt>, <tt>&gt;=</tt>, and <tt>&lt;&gt;</tt> work
+on both string and numeric types.  For string match you can use the
+SQL <tt>LIKE</tt> operator; e.g., <tt>\select_{name like 'A%'}
+drinker;</tt> finds all drinkers whose name start with A, as
+<tt>%</tt> is a wildcard character that matches any number of
+characters.</li>
+
+<li><tt>\project_{<i>attr_list</i>}</tt> is the relational projection
+operator, where <tt><i>attr_list</i></tt> is a comma-separated list
+of attribute names.  For example, to find out what beers are served
+by Talk of the Town (but without the price information), we can write
+<tt>\project_{bar, beer} (\select_{bar = 'Talk of the Town'}
+Serves);</tt>.</li>
+
+<li><tt>\join_{<i>cond</i>}</tt> is the relational theta-join
+operator.  For example, to join <tt>Drinker(name, address)</tt> and
+<tt>Frequents(drinker, bar, times_a_week)</tt> relations together
+using drinker name, we can write <tt>Drinker \join_{name = drinker}
+Frequents;</tt>.  Syntax for <i>cond</i> again follows SQL; see notes
+on <tt>\select</tt> for more details.</li>
+
+<li><tt>\join</tt> is the relational natural join operator.  For
+example, to join <tt>Drinker(name, address)</tt> and
+<tt>Frequents(drinker, bar, times_a_week)</tt> relations together
+using drinker name, we can write <tt>Drinker \join \rename_{name,
+bar, times_a_week} Frequents;</tt>.  Natural join will automatically
+equate all pairs of identically named attributes from its inputs (in
+this case, <tt>name</tt>), and output only one attribute per pair.
+Here we use <tt>\rename</tt> to create two <tt>name</tt> attributes
+for the natural join; see notes on <tt>\rename</tt> below for more
+details.</li>
+
+<li><tt>\cross</tt> is the relational cross product operator.  For
+example, to compute the cross product of <tt>Drinker</tt> and
+<tt>Frequents</tt>, we can write <tt>Drinker \cross
+Frequents;</tt>.</li>
+
+<li><tt>\union</tt>, <tt>\diff</tt>, and <tt>\intersect</tt> are the
+relational union, difference, and intersect operators.  For a trivial
+example, to compute the union, difference, and intersection between
+<tt>Drinker</tt> and itself, we can write <tt>Drinker \union
+Drinker;</tt>, <tt>Drinker \diff Drinker;</tt>, and <tt>Drinker
+\intersect Drinker;</tt>, which would return <tt>Drinker</tt> itself,
+an empty relation, and <tt>Drinker</tt> itself, respectively.</li>
+
+<li><tt>\rename_{<i>new_attr_name_list</i>}</tt> is the relational
+rename operator, where <tt><i>new_attr_name_list</i></tt> is a
+comma-separated list of new names, one for each attribute of the
+input relation.  For example, to rename the attributes of relation
+<tt>Drinker</tt> and compute the cross product of <tt>Drinker</tt>
+and itself, we can write <tt>\rename_{name1, address1} Drinker \cross
+\rename_{name2, address2} Drinker;</tt>.</li>
+
+</ul>
+
+<hr>
+<h3>Known Issues/Limitations</h3>
+
+<ul>
+
+<li><tt>\rename</tt> only supports renaming of attributes; it does
+not support renaming of the input relation.</li>
+
+<li><tt>\union</tt>, <tt>\diff</tt>, and <tt>\intersect</tt> check
+the compatibility of input relations by checking the types of each
+pair of attributes in the order they appear in the input relations.
+Therefore, <tt>(\project_{name, address} Drinker) \diff
+(\project_{address, name} Drinker)</tt> will not return an empty
+table, because the ordering of attributes is important.  This
+behavior is consistant with SQL (which departs from the
+"purest" relational model where the ordering of attributes
+is unimportant).
+
+</li><li>Error messages may not be especially meaningful.  Recall that RA
+translates relational algebra expressions into SQL queries.  RA
+expressions with ill-formed selection/join conditions or attribute
+name lists simply result in incorrect SQL queries.  In these cases,
+RA just passes back the error messages from the underlying database
+system, without attempting to create RA-specific messages.</li>
+
+<li>For some database systems, RA does not allow a relational algebra
+expression (or subexpression) to produce a result relation with
+identically named attributes, because these attributes cannot be
+distinguished.  Depending on the underlying database system, you may
+get an error message like <i>column "name" specified more
+than once</i> (from PostgreSQL), or <i>the statement does not include
+a required column list</i> (from DB2).<br>
+
+In particular, <tt>\cross</tt> and <tt>\join_{<i>cond</i>}</tt>
+(theta-join) do not allow input relations with identically named
+attributes.  For example, <tt>Drinker \cross Drinker;</tt> is illegal
+because it would generate a relation with two <tt>name</tt> and two
+<tt>address</tt> attributes.  Therefore, the attributes need to be
+renamed before the cross product.  Also, <tt>\project</tt> cannot
+output the same attribute more than once.<br>
+
+SQLite has no problem with identically named attributes, because
+it automatically assigns attributes different names.</li>
+
+<li>As a general rule, RA may signal an error whenever it has trouble
+determining how to name the attributes of a result relation.  This
+behavior is database-dependent.<br>
+
+For example, consider <tt>Bar \union Beer;</tt>.  Never mind what
+this query means, but it is arguably legal because both relations
+have two attributes with compatible string types.  PostgreSQL,
+SQLite, and MySQL have no problem with this query, but DB2 will
+complain that their attribute names are different.  In any case,
+<tt>\rename_{A, B} Bar \union \rename_{A, B} Beer;</tt> will always
+work.  Also, <tt>\project_{price+1} Serves</tt> does not work on DB2,
+not because it does not support arithmetic operators, but because RA
+does not know how to name the resulting attribute.  On the other
+hand, PostgreSQL will accept this query and assign a default
+attribute name <tt>?column?</tt>, though it will still bark at
+<tt>\project_{price+1, price+2} Serves</tt>.  SQLite and MySQL
+happily take both, by automatically assigning different names to
+output attributes.</li>
+
+</ul>
+
+<hr>
+
+<address>Maintained by <a href="http://www.cs.duke.edu/~junyang/">Jun Yang</a></address>
+
+
+
+</body></html>

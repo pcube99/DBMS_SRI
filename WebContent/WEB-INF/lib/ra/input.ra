@@ -1,0 +1,5 @@
+\sqlexec_{set search_path to dbms_sri};
+\project_{*} (
+exam
+);
+

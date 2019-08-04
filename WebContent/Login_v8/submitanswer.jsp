@@ -16,35 +16,35 @@
 <style><%@include file="/WEB-INF/css/style.css"%></style>
 <style><%@include file="/WEB-INF/css/b1.css"%></style>
 <style><%@include file="/WEB-INF/css/b2.css"%></style>
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"><body>
 
 <script><%@include file="/WEB-INF/js/j1.js"%></script>
 <script><%@include file="/WEB-INF/js/j2.js"%></script>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark">
+<nav class="navbar navbar-dark bg-dark"">
   <div class="navbar-header ">
       <a class="navbar-brand" href="/">DBMS</a>
   </div>
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link active" href="#" ><i class="fas fa-home"></i><strong> Home</strong></a>
+      <a class="nav-link active" href="loginHelper.jsp" > <i class="fa fa-home"></i> <strong> Home</strong></a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="" style="color :aliceblue"><i class="fas fa-info-circle"></i><strong> Q & A</strong></a>
+      <a class="nav-link" href="viewQA.jsp" style="color :aliceblue"><i class="fa fa-file"></i><strong>Exam</strong></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="" style="color :aliceblue"><i class="fas fa-sign-out-alt"></i><strong> Marks</strong></a>
+        <a class="nav-link" href="marks.jsp" style="color :aliceblue"><i class="fa fa-list-ul"></i><strong> Marks</strong></a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="help" style="color :aliceblue"><i class="fas fa-question-circle"></i><strong> Help</strong></a>
+        <a class="nav-link" href="help.jsp" style="color :aliceblue"><i class="fa fa-info-circle"></i><strong> Help</strong></a>
     </li>     
     <li class="nav-item">
-        <a class="nav-link" href="help" style="color :aliceblue"><i class="fas fa-sign-out-alt"></i><strong> Logout</strong></a>
+        <a class="nav-link" href="logout.jsp" style="color :aliceblue"><i class="fa fa-sign-out"></i><strong> Logout</strong></a>
     </li>  
   </ul>
 </nav>
 <%
-System.out.println("sss");
 		Connection c= null;
 		try{
 		    Class.forName("org.postgresql.Driver");
@@ -53,6 +53,13 @@ System.out.println("sss");
 		} catch(Exception e) {
 		    System.out.println("error");
 		}
+		if(null == session.getAttribute("user")){
+			%>
+			<a href="index.jsp"><img id="error" src="e.JPG"></a>
+
+			<%	
+			}
+			else{
 		try {
 		Statement ques_submit = null;
 		Statement s = null;
@@ -66,7 +73,10 @@ System.out.println("sss");
 		s.executeQuery(search_schema);
 		}catch(Exception ep){
 		}
-		
+		if(request.getParameter(request.getParameter("sanswer")) == null){
+			out.println("null");
+
+		}
 		PreparedStatement stmt;
 		stmt = c.prepareStatement("INSERT into answers (exam_id, student_id,question_id,student_answer,obtained_marks) values (?,?,?,?,?)");
 		stmt.setInt(1, Integer.parseInt(request.getParameter("examid")));
@@ -85,6 +95,7 @@ System.out.println("sss");
 		}catch(Exception e) {
 			
 		}
+			}
 %>
 </body>
 </html>

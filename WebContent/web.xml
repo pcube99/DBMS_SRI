@@ -10,25 +10,6 @@
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
 
-<servlet>
-<servlet-name>abc</servlet-name>
-<servlet-class>com.dbms.loginServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>abc</servlet-name>
-<url-pattern>/login</url-pattern>
-</servlet-mapping>
-
-<servlet>
-<servlet-name>abcd</servlet-name>
-<servlet-class>com.dbms.loginHelper.jsp</servlet-class>
-</servlet>
-<servlet-mapping>
-<servlet-name>abcd</servlet-name>
-<url-pattern>/gg</url-pattern>
-</servlet-mapping>
-
-
 
 
 </web-app>

@@ -7,7 +7,8 @@
 <title>Insert title here</title>
 </head>
 <body>
-<form name="f1" method="get" action="success.jsp">
+<iframe name="formDestination" class="hidethis"></iframe>
+<form name="f1" method="post" target="formDestination" action="registerSuccess.jsp">
 	<label>StudentID : </label>
 	<br>
 	<input type="text" placeholder="201601xxx" name="student_id"> 
